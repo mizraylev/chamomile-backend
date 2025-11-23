@@ -4,6 +4,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
+import { hash } from 'bcrypt';
+import { PASSWORD_HASH_ROUNDS } from 'src/constants/enter';
 
 @Injectable()
 export class UsersService {
@@ -15,13 +17,18 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     await this.dataSource.transaction(async (manager) => {
+      const hashedPassword = await hash(
+        createUserDto.password,
+        PASSWORD_HASH_ROUNDS,
+      );
+
       const newUser: Omit<User, 'id'> = {
         nickname: createUserDto.username,
         ...createUserDto,
-        hashedPassword: createUserDto.password, // TODO hashing
+        hashedPassword,
       };
+
       await manager.save(User, newUser);
-      console.log('created a user');
     });
   }
 
