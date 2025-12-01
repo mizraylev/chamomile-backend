@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { hash } from 'bcrypt';
-import { PASSWORD_HASH_ROUNDS } from 'src/constants/enter';
+import { PASSWORD_HASH_ROUNDS } from './constants';
 
 @Injectable()
 export class UsersService {
